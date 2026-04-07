@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.remotion.dev)",
+      "WebFetch(domain:remotion.dev)",
+      "Bash(npm install:*)",
+      "Bash(pkill -f \"remotion studio\")",
+      "Bash(mkdir -p ~/remotion)",
+      "Bash(npx --yes create-video@latest . --template template)",
+      "Bash(npm search:*)",
+      "Bash(npm view:*)",
+      "Bash(grep -l \"spring\" /Users/aya/remotion/node_modules/remotion/dist/cjs/*.js)",
+      "Bash(npx tsc:*)",
+      "Bash(npm start:*)",
+      "Bash(npx remotion:*)",
+      "Bash(node:*)",
+      "Bash(npm --version)"
+    ]
+  }
+}
