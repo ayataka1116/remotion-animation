@@ -12,18 +12,34 @@ type Props = {
   video: VideoFile;
   index: number;
   enterFrame: number;
+  scatterPosition: { x: number; y: number };
+  gridPosition: { x: number; y: number };
+  gatherStartFrame: number;
+  gatherEndFrame: number;
 };
 
-export const VideoThumbnail: React.FC<Props> = ({ video, index, enterFrame }) => {
+export const VideoThumbnail: React.FC<Props> = ({
+  video,
+  index,
+  enterFrame,
+  scatterPosition,
+  gridPosition,
+  gatherStartFrame,
+  gatherEndFrame,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const delay = Math.max(0, frame - enterFrame);
-  const progress = Math.min(delay, 30); // clamp so animation completes and stays
+  // Phase 1: Entrance spring (frames 0-30)
+  const entranceDelay = Math.max(0, frame - enterFrame);
+  const entranceProgress = Math.min(entranceDelay, 30);
 
-  // Spring animation for scale
+  // Opacity - fade in from frame 0 (when enterFrame arrives)
+  const entranceOpacity = entranceDelay > 0 ? Math.min(1, entranceProgress / 10) : 0;
+
+  // Scale spring
   const scale = spring({
-    frame: progress,
+    frame: entranceProgress,
     fps,
     config: {
       damping: 12,
@@ -32,24 +48,34 @@ export const VideoThumbnail: React.FC<Props> = ({ video, index, enterFrame }) =>
     },
   });
 
-  // Opacity fade in
-  const opacity = Math.min(1, progress / 10);
+  // Phase 2: Gathering motion (frames 60-120)
+  const gatherFrame = Math.max(0, frame - gatherStartFrame);
 
-  // Translate Y from below
-  const translateY = interpolate(progress, [0, 20], [100, 0], { extrapolateClamp: true });
+  const gatherSpring = spring({
+    frame: gatherFrame,
+    fps,
+    config: { damping: 12, stiffness: 90, mass: 0.5 },
+  });
 
-  // Slight rotation
-  const rotation = interpolate(progress, [0, 20], [-5, 0], { extrapolateClamp: true });
+  // Interpolated position from scatter to grid
+  const currentX = interpolate(gatherSpring, [0, 1], [scatterPosition.x, gridPosition.x]);
+  const currentY = interpolate(gatherSpring, [0, 1], [scatterPosition.y, gridPosition.y]);
+
+  // Combined opacity: entrance fade in + visibility during gather
+  const opacity = Math.max(entranceOpacity, frame >= gatherStartFrame ? 1 : 0);
 
   return (
     <div
       style={{
+        position: "absolute",
+        left: currentX,
+        top: currentY,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         width: 180,
         opacity,
-        transform: `scale(${scale}) translateY(${translateY}px)`,
+        transform: `scale(${scale})`,
       }}
     >
       {/* Thumbnail area */}

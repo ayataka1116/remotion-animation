@@ -10,7 +10,7 @@ export const ComputerScreen: React.FC<Props> = ({ children }) => {
   const { fps } = useVideoConfig();
 
   // Power-on glow effect
-  const glowOpacity = interpolate(frame, [0, 15], [0, 1], { extrapolateClamp: true });
+  const glowOpacity = interpolate(frame, [0, 15], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   return (
     <div
@@ -26,7 +26,7 @@ export const ComputerScreen: React.FC<Props> = ({ children }) => {
       {/* Screen content */}
       <div style={{ opacity: glowOpacity }}>{children}</div>
 
-      {/* Subtle vignette effect */}
+      {/* Subtle blue tint vignette effect */}
       <div
         style={{
           position: "absolute",
@@ -34,7 +34,7 @@ export const ComputerScreen: React.FC<Props> = ({ children }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.3) 100%)",
+          background: "radial-gradient(ellipse at center, transparent 50%, rgba(184, 212, 232, 0.2) 100%)",
           pointerEvents: "none",
         }}
       />

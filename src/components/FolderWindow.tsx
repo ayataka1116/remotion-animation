@@ -5,10 +5,23 @@ import { VideoFile } from "./VideoThumbnail";
 
 type Props = {
   videos: VideoFile[];
+  scatterPositions: { x: number; y: number }[];
+  gridPositions: { x: number; y: number }[];
   windowEnterFrame: number;
+  gridEnterFrame: number;
+  gatherStartFrame: number;
+  gatherEndFrame: number;
 };
 
-export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
+export const FolderWindow: React.FC<Props> = ({
+  videos,
+  scatterPositions,
+  gridPositions,
+  windowEnterFrame,
+  gridEnterFrame,
+  gatherStartFrame,
+  gatherEndFrame,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -31,6 +44,9 @@ export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
   const trafficOpacity = Math.min(1, Math.max(0, (frame - windowEnterFrame - 15) / 10));
   const titleOpacity = Math.min(1, Math.max(0, (frame - windowEnterFrame - 20) / 10));
 
+  // Timeline bar fade in (phase 3)
+  const timelineOpacity = interpolate(frame, [130, 160], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+
   return (
     <div
       style={{
@@ -38,7 +54,7 @@ export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
         height: 620,
         backgroundColor: "#ffffff",
         borderRadius: 10,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+        boxShadow: "0 10px 40px rgba(107, 163, 214, 0.3)",
         overflow: "hidden",
         transform: `scale(${scale})`,
         opacity,
@@ -48,7 +64,7 @@ export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
       <div
         style={{
           height: 40,
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#B8D4E8",
           display: "flex",
           alignItems: "center",
           paddingLeft: 12,
@@ -104,7 +120,7 @@ export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
             opacity: titleOpacity,
           }}
         >
-          Videos
+          Video Editor
         </div>
       </div>
 
@@ -114,9 +130,60 @@ export const FolderWindow: React.FC<Props> = ({ videos, windowEnterFrame }) => {
           backgroundColor: "#ffffff",
           padding: 10,
           paddingTop: 60,
+          position: "relative",
         }}
       >
-        <VideoGrid videos={videos} gridEnterFrame={windowEnterFrame + 30} />
+        <VideoGrid
+          videos={videos}
+          scatterPositions={scatterPositions}
+          gridPositions={gridPositions}
+          gridEnterFrame={gridEnterFrame}
+          gatherStartFrame={gatherStartFrame}
+          gatherEndFrame={gatherEndFrame}
+        />
+
+        {/* Timeline bar at bottom */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 10,
+            left: 10,
+            right: 10,
+            height: 30,
+            backgroundColor: "#E8F4FC",
+            borderRadius: 6,
+            opacity: timelineOpacity,
+            display: "flex",
+            alignItems: "center",
+            paddingLeft: 10,
+            gap: 8,
+          }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              backgroundColor: "#6BA3D6",
+            }}
+          />
+          <div
+            style={{
+              flex: 1,
+              height: 4,
+              backgroundColor: "#B8D4E8",
+              borderRadius: 2,
+            }}
+          />
+          <div
+            style={{
+              width: 50,
+              height: 4,
+              backgroundColor: "#6BA3D6",
+              borderRadius: 2,
+            }}
+          />
+        </div>
       </div>
     </div>
   );
