@@ -18,15 +18,15 @@ const VIDEO_FILES: VideoFile[] = [
 
 // Scatter positions (thumbnails start around the edges)
 const SCATTER_POSITIONS = [
-  { x: 100, y: 150 },
-  { x: 250, y: 80 },
-  { x: 450, y: 120 },
-  { x: 1300, y: 100 },
-  { x: 1500, y: 200 },
-  { x: 1600, y: 400 },
-  { x: 1400, y: 600 },
-  { x: 200, y: 700 },
-  { x: 100, y: 500 },
+  { x: 100, y: 250 },
+  { x: 250, y: 180 },
+  { x: 450, y: 220 },
+  { x: 1300, y: 200 },
+  { x: 1500, y: 300 },
+  { x: 1600, y: 500 },
+  { x: 1400, y: 700 },
+  { x: 200, y: 800 },
+  { x: 100, y: 600 },
 ];
 
 // Upload zone center position (where thumbnails go)
@@ -43,7 +43,7 @@ const calculateFinalPositions = () => {
   const gridWidth = 3 * cellSize - THUMBNAIL_GAP;
   const gridHeight = 3 * cellSize - THUMBNAIL_GAP;
   const startX = UPLOAD_ZONE_CENTER.x - gridWidth / 2;
-  const startY = UPLOAD_ZONE_CENTER.y - gridHeight / 2;
+  const startY = UPLOAD_ZONE_CENTER.y - gridHeight / 2 + 20; // Shift thumbnails down by 20px
 
   const positions = [];
   for (let row = 0; row < 3; row++) {
